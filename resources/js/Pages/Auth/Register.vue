@@ -1,10 +1,12 @@
 <script setup>
+import { ref } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
+import { defineAsyncComponent } from 'vue';
 
 const form = useForm({
     name: '',
@@ -19,12 +21,24 @@ const submit = () => {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
+
+const Login = defineAsyncComponent(() => import('./Login.vue'));
+const showLoginModal = ref(false);
+const openLoginModal = () => {
+  showLoginModal.value = true;
+};
+const closeLoginModal = () => {
+  showLoginModal.value = false;
+};
+
 </script>
 
 <template>
-    <GuestLayout>
+    <div class="modal" v-if="showLoginModal" @click.self="closeLoginModal">
+        <Login />
+    </div>
+    <GuestLayout v-else>
         <Head title="Register" />
-
         <form @submit.prevent="submit">
             <div>
                 <InputLabel for="name" value="Name" />
@@ -41,7 +55,6 @@ const submit = () => {
 
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
-
             <div class="mt-4">
                 <InputLabel for="email" value="Email" />
 
@@ -88,13 +101,13 @@ const submit = () => {
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <Link
-                    :href="route('login')"
+                <button
+                    @click="openLoginModal"
+                    type="button"
                     class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
+                    >
                     Already registered?
-                </Link>
-
+                </button>
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Register
                 </PrimaryButton>
