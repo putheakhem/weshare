@@ -45,45 +45,21 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100 ">
-            <nav class="bg-white border-b border-gray-100 ">
+        <div class="min-h-screen ">
+            <nav class=" border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
-                            <div v-if="$page.props.auth.user" class="shrink-0 flex items-center">
-                                <Link v-if="$page.props.auth.user.role == 0" :href="route('manage_users')">
-                                <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
                             <div v-if="!$page.props.auth.user ||
                                 !$page.props.auth.user.role == 0
                                 " class="shrink-0 flex items-center">
-                                <Link :href="route('weshare')">
+                                <Link :href="route('home')">
                                 <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
 
-                            <!-- Navigation Links for Admin -->
-                            <div v-if="$page.props.auth.user" class="inline-flex">
-                                <div v-if="$page.props.auth.user.role == 0"
-                                    class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                    <NavLink :href="route('manage_users')" :active="route().current('manage_users')
-                                        ">
-                                        Manage Users
-                                    </NavLink>
-                                </div>
-                            </div>
-
-                            <!-- Navigation Links for Users -->
-                            <div v-if="!$page.props.auth.user ||
-                                !$page.props.auth.user.role == 0
-                                " class="inline-flex">
-                                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                   
-                                </div>
-                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -183,7 +159,7 @@ const showingNavigationDropdown = ref(false);
                         !$page.props.auth.user.role == 0
                         ">
                         <div class="pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink :href="route('weshare')" :active="route().current('')">
+                            <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                 Dashboard
                             </ResponsiveNavLink>
                         </div>
