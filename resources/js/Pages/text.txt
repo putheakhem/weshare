@@ -1,0 +1,503 @@
+<template>
+  <div>
+    <GuestLayout>
+      <Head title="Store the Post" />
+
+      <form @submit.prevent="storePost">
+        <div>
+          <InputLabel for="title" value="Title" />
+
+          <TextInput
+            id="title"
+            type="title"
+            class="mt-1 block w-full p-2 bg-slate-100 border"
+            v-model="form.data.title"
+            placeholder="Title"
+          />
+
+          <InputError class="mt-2" :message="form.errors.title" />
+        </div>
+
+        <div class="mt-4">
+          <InputLabel for="description" value="Description" />
+
+          <textarea
+            id="description"
+            rows="4"
+            v-model="form.data.description"
+            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Write your thoughts here..."
+          ></textarea>
+
+          <InputError class="mt-2" :message="form.errors.description" />
+        </div>
+
+        <div class="mt-4">
+          <div id="app">
+            <file-pond
+              name="file"
+              ref="pond"
+              label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
+              v-bind:allow-multiple="true"
+              accepted-file-types="application/pdf"
+              v-bind:files="myFiles"
+              v-bind:server="myServer"
+              v-on:initfile="handleFilePondInitFile"
+            />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end mt-4">
+          <PrimaryButton
+            class="ml-4"
+            :class="{ 'opacity-25': form.processing }"
+            :disabled="form.processing"
+          >
+            Store Post
+          </PrimaryButton>
+        </div>
+      </form>
+    </GuestLayout>
+  </div>
+</template>
+  
+  <script>
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import vueFilePond from "vue-filepond";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileMetadata from "filepond-plugin-file-metadata";
+import { Head, useForm, usePage } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { computed } from "vue";
+const FilePond = vueFilePond(
+  FilePondPluginFileMetadata,
+  FilePondPluginFileValidateType,
+  FilePondPluginImagePreview
+);
+
+export default {
+  name: "FilePondDemo",
+  components: {
+    FilePond,
+    InputError,
+    InputLabel,
+    TextInput,
+    GuestLayout,
+  },
+  setup() {
+    const page = usePage();
+    const csrf = computed(() => page.props.csrf_token);
+
+    const myFiles = ref([]);
+    const myServer = {
+      process: (fieldName, file, metadata, load, error, progress, abort) => {
+        const formData = new FormData();
+        formData.append(fieldName, file);
+
+        axios
+          .post("/upload", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              "X-CSRF-TOKEN": page.props.csrf_token,
+            },
+            onUploadProgress: (event) => {
+              progress(event.lengthComputable, event.loaded, event.total);
+            },
+          })
+          .then((response) => {
+            load(response.data.folder);
+          })
+          .catch((err) => {
+            error(err);
+          });
+      },
+      revert: "/revert",
+    };
+
+    const form = useForm({
+      title: "",
+      description: "",
+    });
+
+    const handleFilePondInitFile = (item) => {
+      console.log(item);
+      item.setMetadata("hello", "world");
+    };
+
+    const storePost = () => {
+      form.post("/");
+    };
+
+    return {
+      form,
+      myFiles,
+      myServer,
+      handleFilePondInitFile,
+      storePost,
+    };
+  },
+};
+</script>
+  
+
+
+<script setup>
+import { ref } from "vue";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
+import FileUpload from "primevue/fileupload";
+import Dropdown from "primevue/dropdown";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { Head } from "@inertiajs/vue3";
+const visible = ref(false);
+// props for major and file type
+const props = defineProps({
+  majors: { Type: Array, Required: true },
+  types: {
+    Type: Array,
+    Required: true,
+  },
+});
+const selectedMajor = ref(null);
+const selectedFileType = ref(null);
+</script>
+
+<template>
+  <Head title="Home" />
+  <AuthenticatedLayout>
+    <template #header>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Home</h2>
+    </template>
+    <div class="card flex justify-content-center">
+      <Dialog
+        v-model:visible="visible"
+        modal
+        header="Uplode File"
+        :style="{ width: '60vw' }"
+      >
+        <div class="surface-card p-4 shadow-2 border-round w-full">
+          <div class="text-center mb-5">
+            <div class="text-900 text-3xl font-medium mb-3">Welcome Back</div>
+            <span class="text-600 font-medium line-height-3"
+              >Don't have an account?</span
+            >
+          </div>
+
+          <div>
+            <label for="department" class="block text-900 font-medium mb-2"
+              >Department</label
+            >
+            <Dropdown
+              v-model="selectedMajor"
+              :options="majors"
+              optionLabel="name"
+              placeholder="Select a major"
+              class="w-full md:w-14rem"
+            />
+
+            <label for="Type of file" class="block text-900 font-medium mb-2"
+              >Type of file</label
+            >
+            <Dropdown
+              v-model="selectedFileType"
+              :options="types"
+              optionLabel="name"
+              placeholder="Select a Type of file"
+              class="w-full md:w-14rem"
+            />
+            <!-- uplode file -->
+            <div class="mb-6">
+              <div class="surface-card p-4 shadow-2 border-round">
+                <div class="font-medium text-500 mb-3">Uplode Files</div>
+                <div
+                  style="height: 150px"
+                  class="justify-center flex items-center border-2 border-dashed surface-border"
+                >
+                  <FileUpload
+                    mode="basic"
+                    name="demo[]"
+                    url="./upload.php"
+                    accept="*"
+                    :maxFileSize="1000000"
+                    @upload="onUpload"
+                  />
+                </div>
+              </div>
+            </div>
+            <Button label="Upload" icon="pi pi-file" class="w-full"></Button>
+          </div>
+        </div>
+      </Dialog>
+    </div>
+
+    <!-- -12 -->
+    <div class="py-12">
+      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="flex justify-end m-2 p-2">
+          <Button
+            label="Show"
+            icon="pi pi-external-link"
+            @click="visible = true"
+          />
+        </div>
+
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+          <div class="p-6 text-gray-900">
+            <!-- doc -->
+            <div
+              class="flex flex-col rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700 md:max-w-xl md:flex-row p-4"
+            >
+              <img
+                class="h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
+                src="https://tecdn.b-cdn.net/wp-content/uploads/2020/06/vertical.jpg"
+                alt=""
+              />
+              <div class="flex flex-col justify-start p-6">
+                <h5
+                  class="mb-2 text-xl font-medium text-neutral-800 dark:text-neutral-50"
+                >
+                  Card title
+                </h5>
+                <p
+                  class="mb-4 text-base text-neutral-600 dark:text-neutral-200"
+                >
+                  This is a wider card with supporting text below as a natural
+                  lead-in to additional content. This content is a little bit
+                  longer.
+                </p>
+                <p class="text-xs text-neutral-500 dark:text-neutral-300">
+                  Last updated 3 mins ago
+                </p>
+              </div>
+            </div>
+            <!-- doc -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthenticatedLayout>
+</template>
+
+
+
+
+
+
+---------------------------------------
+
+<template>
+  <div>
+    <GuestLayout>
+      <Head title="Store the Post" />
+
+      <form @submit.prevent="storePost">
+        <div>
+          <label for="department" class="block text-900 font-medium mb-2"
+            >Department</label
+          >
+          <Dropdown
+            v-model="form.major_id"
+            :options="majors"
+            optionLabel="name"
+            placeholder="Select a major"
+            class="w-full md:w-14rem"
+          />
+
+          <label
+            for="Type of file"
+            value="filetype"
+            class="block text-900 font-medium mb-2"
+            >Type of file</label
+          >
+          <Dropdown
+            v-model="form.filetype_id"
+            :options="filetype"
+            optionLabel="name"
+            placeholder="Select a Type of file"
+            class="w-full md:w-14rem"
+          />
+        </div>
+
+        <div class="mt-4">
+          <InputLabel for="description" value="Description" />
+
+          <textarea
+            id="description"
+            rows="4"
+            v-model="form.desc"
+            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Write your thoughts here..."
+          ></textarea>
+
+          <InputError class="mt-2" :message="form.errors.desc" />
+        </div>
+
+        <div class="mt-4">
+          <div id="app">
+            <file-pond
+              name="image"
+              ref="pond"
+              label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
+              v-bind:allow-multiple="true"
+              accepted-file-types="application/pdf"
+              v-bind:files="myFiles"
+              v-bind:server="myServer"
+              v-on:initfile="handleFilePondInitFile"
+            />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end mt-4">
+          <PrimaryButton
+            class="ml-4"
+            :class="{ 'opacity-25': form.processing }"
+            :disabled="form.processing"
+          >
+            Store Post
+          </PrimaryButton>
+        </div>
+      </form>
+    </GuestLayout>
+  </div>
+</template>
+    
+    <script>
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import Dropdown from "primevue/dropdown";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import vueFilePond from "vue-filepond";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import FilePondPluginFileMetadata from "filepond-plugin-file-metadata";
+import { Head, useForm, usePage } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { computed } from "vue";
+import axios from "axios";
+const FilePond = vueFilePond(
+  FilePondPluginFileMetadata,
+  FilePondPluginFileValidateType,
+  FilePondPluginImagePreview
+);
+
+export default {
+  props: ["majors", "filetype"],
+  name: "FilePondDemo",
+  components: {
+    FilePond,
+    InputError,
+    InputLabel,
+    TextInput,
+    GuestLayout,
+    PrimaryButton,
+    Dropdown,
+  },
+  setup() {
+    const page = usePage();
+    const csrf = computed(() => page.props.csrf_token);
+
+    const myFiles = ref([]);
+    const myServer = {
+      process: (fieldName, file, metadata, load, error, progress, abort) => {
+        const formData = new FormData();
+        formData.append(fieldName, file);
+
+        axios
+          .post("/upload", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              "X-CSRF-TOKEN": page.props.csrf_token,
+            },
+            onUploadProgress: (event) => {
+              progress(event.lengthComputable, event.loaded, event.total);
+            },
+          })
+          .then((response) => {
+            load(response.data.folder);
+          })
+          .catch((err) => {
+            error(err);
+          });
+      },
+      revert: "/revert",
+    };
+
+    const form = useForm({
+      major_id: "",
+      filetype_id: " ",
+      desc: " ",
+    });
+
+    const handleFilePondInitFile = (item) => {
+      console.log(item);
+      item.setMetadata("hello", "world");
+    };
+
+    const storePost = () => {
+  form.post("/")
+    .then(() => {
+      console.log("Data sent to /store-post");
+      window.location.href = "/welcome"; // Redirect to the welcome route
+    })
+    .catch((errors) => {
+      console.log(errors);
+    });
+};
+
+    return {
+      form,
+      myFiles,
+      myServer,
+      handleFilePondInitFile,
+      storePost,
+    };
+  },
+};
+</script>
+
+
+
+<script setup>
+import { ref } from "vue";
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Head, useForm, usePage } from "@inertiajs/vue3";
+import vueFilePond from "vue-filepond";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.esm.js";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js";
+
+// Import styles
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+import { computed } from "vue";
+
+// Create FilePond component
+const FilePond = vueFilePond(
+    FilePondPluginFileValidateType,
+    FilePondPluginImagePreview
+);
+
+const page = usePage();
+const pond = ref(null);
+const files = ref([]);
+const csrf = computed(() => page.props.csrf_token);
+
+const form = useForm({
+    title: "",
+    description: "",
+});
+</script>
