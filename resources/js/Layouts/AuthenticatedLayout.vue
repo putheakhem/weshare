@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import FooterLayout from "./FooterLayout.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
@@ -10,33 +11,33 @@ import { defineAsyncComponent } from "vue";
 import { Link } from "@inertiajs/vue3";
 
 defineProps({
-    canLogin: {
-        type: Boolean,
-    },
-    canRegister: {
-        type: Boolean,
-    },
+  canLogin: {
+    type: Boolean,
+  },
+  canRegister: {
+    type: Boolean,
+  },
 });
 
 //Login Modal
 const Login = defineAsyncComponent(() => import("../Pages/Auth/Login.vue"));
 const showLoginModal = ref(false);
 const openLoginModal = () => {
-    showLoginModal.value = true;
+  showLoginModal.value = true;
 };
 const closeLoginModal = () => {
-    showLoginModal.value = false;
+  showLoginModal.value = false;
 };
 //Register Modal
 const Register = defineAsyncComponent(() =>
-    import("../Pages/Auth/Register.vue")
+  import("../Pages/Auth/Register.vue")
 );
 const showRegisterModal = ref(false);
 const openRegisterModal = () => {
-    showRegisterModal.value = true;
+  showRegisterModal.value = true;
 };
 const closeRegisterModal = () => {
-    showRegisterModal.value = false;
+  showRegisterModal.value = false;
 };
 
 //Dropdown Navigation
@@ -44,227 +45,334 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100 ">
-            <nav class="bg-white border-b border-gray-100 ">
-                <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div v-if="$page.props.auth.user" class="shrink-0 flex items-center">
-                                <Link v-if="$page.props.auth.user.role == 0" :href="route('manage_users')">
-                                <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
-                            <div v-if="!$page.props.auth.user ||
-                                !$page.props.auth.user.role == 0
-                                " class="shrink-0 flex items-center">
-                                <Link :href="route('weshare')">
-                                <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
-
-                            <!-- Navigation Links for Admin -->
-                            <div v-if="$page.props.auth.user" class="inline-flex">
-                                <div v-if="$page.props.auth.user.role == 0"
-                                    class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                    <NavLink :href="route('manage_users')" :active="route().current('manage_users')
-                                        ">
-                                        Manage Users
-                                    </NavLink>
-                                </div>
-                            </div>
-
-                            <!-- Navigation Links for Users -->
-                            <div v-if="!$page.props.auth.user ||
-                                !$page.props.auth.user.role == 0
-                                " class="inline-flex">
-                                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                   
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
-                            <!-- Settings Dropdown -->
-                            <div v-if="$page.props.auth.user" class="ml-3 relative">
-                                <Dropdown :align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                                {{ $page.props.auth.user.name }}
-                                                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-                                    <template #content>
-                                        <DropdownLink :href="route('profile.edit')">
-                                            Profile
-                                        </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                            <div v-else class="flex">
-                                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                    <NavPrime>
-                                        <button @click="openLoginModal">
-                                            Login
-                                        </button>
-                                        <div class="modal" v-if="showLoginModal" @click.self="closeLoginModal">
-                                            <Login />
-                                        </div>
-                                    </NavPrime>
-                                </div>
-                                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                    <NavPrime>
-                                        <button @click="openRegisterModal">
-                                            Register
-                                        </button>
-                                        <div class="modal" v-if="showRegisterModal" @click.self="closeRegisterModal">
-                                            <Register />
-                                        </div>
-                                    </NavPrime>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center sm:hidden">
-                            <button @click="
-                                showingNavigationDropdown =
-                                !showingNavigationDropdown
-                                "
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path :class="{
-                                        hidden: showingNavigationDropdown,
-                                        'inline-flex':
-                                            !showingNavigationDropdown,
-                                    }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16" />
-                                    <path :class="{
-                                        hidden: !showingNavigationDropdown,
-                                        'inline-flex':
-                                            showingNavigationDropdown,
-                                    }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+  <div>
+    <div class="min-h-screen bg-gray-100">
+      <nav class="bg-white border-b border-gray-100">
+        <!-- Primary Navigation Menu -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex">
+              <!-- Logo -->
+              <div
+                v-if="$page.props.auth.user"
+                class="shrink-0 flex items-center"
+              >
+                <Link
+                  v-if="$page.props.auth.user.role == 0"
+                  :href="route('manage_users')"
+                >
+                  <ApplicationLogo
+                    class="block h-9 w-auto fill-current text-gray-800"
+                  />
+                </Link>
+              </div>
+              <div
+                v-if="
+                  !$page.props.auth.user || !$page.props.auth.user.role == 0
+                "
+                class="shrink-0 flex items-center"
+              >
+                <Link :href="route('home')">
+                  <ApplicationLogo
+                    class="block h-9 w-auto fill-current text-gray-800"
+                  />
+                </Link>
+              </div>
+              <!-- Navigation Links for Admin -->
+              <div v-if="$page.props.auth.user" class="inline-flex">
+                <div
+                  v-if="$page.props.auth.user.role == 0"
+                  class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex"
+                >
+                  <NavLink
+                    :href="route('manage_users')"
+                    :active="route().current('manage_users')"
+                  >
+                    Manage Users
+                  </NavLink>
+                  <NavLink
+                    :href="route('manage_majors')"
+                    :active="route().current('manage_majors')"
+                  >
+                    Manage Majors
+                  </NavLink>
                 </div>
+              </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div :class="{
-                    block: showingNavigationDropdown,
-                    hidden: !showingNavigationDropdown,
-                }" class="sm:hidden">
-                    <!-- Admin -->
-                    <div v-if="$page.props.auth.user">
-                        <div v-if="$page.props.auth.user.role == 0" class="pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink :href="route('manage_users')" :active="route().current('manage_users')">
-                                Manage Users
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-
-                    <!-- User -->
-                    <div v-if="!$page.props.auth.user ||
-                        !$page.props.auth.user.role == 0
-                        ">
-                        <div class="pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink :href="route('weshare')" :active="route().current('')">
-                                Dashboard
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div v-if="$page.props.auth.user" class="pt-4 pb-1 border-t border-gray-200">
-                        <div class="px-4">
-                            <div class="font-medium text-base text-gray-800">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="font-medium text-sm text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                Log out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                    <div v-else>
-                        <NavPrime>
-                            <button @click="openLoginModal">Login</button>
-                            <div class="modal" v-if="showLoginModal" @click.self="closeLoginModal">
-                                <Login />
-                            </div>
-                        </NavPrime>
-                        <NavPrime>
-                            <button @click="openRegisterModal">Register</button>
-                            <div class="modal" v-if="showRegisterModal" @click.self="closeRegisterModal">
-                                <Register />
-                            </div>
-                        </NavPrime>
-                    </div>
+              <!-- Navigation Links for Users -->
+              <div
+                v-if="
+                  !$page.props.auth.user || !$page.props.auth.user.role == 0
+                "
+                class="inline-flex"
+              >
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                  <NavLink href="#aboutus"> About Us </NavLink>
                 </div>
-            </nav>
-
-            <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
+              </div>
+              <!-- Navigation Links for Users Login -->
+              <div
+                v-if="$page.props.auth.user"
+                class="inline-flex"
+              >
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                  <NavLink :href="route('dashboard')"> Dashboard </NavLink>
                 </div>
-            </header>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                  <NavLink :href="route('upload')"> Upload </NavLink>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                  <NavLink :href="route('document')"> Document </NavLink>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                  <NavLink :href="route('save')"> Save </NavLink>
+                </div>
+              </div>
+            </div>
 
-            <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+            <div class="hidden sm:flex sm:items-center sm:ml-6">
+              <!-- Settings Dropdown -->
+              <div v-if="$page.props.auth.user" class="ml-3 relative">
+                <Dropdown :align="right" width="48">
+                  <template #trigger>
+                    <span class="inline-flex rounded-md">
+                      <button
+                        type="button"
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                      >
+                        {{ $page.props.auth.user.name }}
+                        <svg
+                          class="ml-2 -mr-0.5 h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    </span>
+                  </template>
+                  <template #content>
+                    <DropdownLink :href="route('profile.edit')">
+                      Profile
+                    </DropdownLink>
+                    <DropdownLink
+                      :href="route('logout')"
+                      method="post"
+                      as="button"
+                    >
+                      Log out
+                    </DropdownLink>
+                  </template>
+                </Dropdown>
+              </div>
+              <div v-else class="flex">
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                  <NavPrime>
+                    <button @click="openLoginModal">Login</button>
+                    <div
+                      class="modal"
+                      v-if="showLoginModal"
+                      @click.self="closeLoginModal"
+                    >
+                      <Login />
+                    </div>
+                  </NavPrime>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                  <NavPrime>
+                    <button @click="openRegisterModal">Register</button>
+                    <div
+                      class="modal"
+                      v-if="showRegisterModal"
+                      @click.self="closeRegisterModal"
+                    >
+                      <Register />
+                    </div>
+                  </NavPrime>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hamburger -->
+            <div class="-mr-2 flex items-center sm:hidden">
+              <button
+                @click="showingNavigationDropdown = !showingNavigationDropdown"
+                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+              >
+                <svg
+                  class="h-6 w-6"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    :class="{
+                      hidden: showingNavigationDropdown,
+                      'inline-flex': !showingNavigationDropdown,
+                    }"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                  <path
+                    :class="{
+                      hidden: !showingNavigationDropdown,
+                      'inline-flex': showingNavigationDropdown,
+                    }"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
+
+        <!-- Responsive Navigation Menu -->
+        <div
+          :class="{
+            block: showingNavigationDropdown,
+            hidden: !showingNavigationDropdown,
+          }"
+          class="sm:hidden"
+        >
+          <!-- Admin -->
+          <div v-if="$page.props.auth.user">
+            <div
+              v-if="$page.props.auth.user.role == 0"
+              class="pt-2 pb-3 space-y-1"
+            >
+              <ResponsiveNavLink
+                :href="route('manage_users')"
+                :active="route().current('manage_users')"
+              >
+                Manage Users
+              </ResponsiveNavLink>
+            </div>
+          </div>
+
+          <!-- User -->
+          <div
+            v-if="!$page.props.auth.user || !$page.props.auth.user.role == 0"
+          >
+            <div class="pt-2 pb-3 space-y-1">
+              <ResponsiveNavLink
+                :href="route('aboutus')"
+                :active="route().current('aboutus')"
+              >
+                About Us
+              </ResponsiveNavLink>
+            </div>
+          </div>
+
+          <!-- Responsive Settings Options -->
+          <div
+            v-if="$page.props.auth.user"
+            class="pt-4 pb-1 border-t border-gray-200"
+          >
+            <div class="px-4">
+              <div class="font-medium text-base text-gray-800">
+                {{ $page.props.auth.user.name }}
+              </div>
+              <div class="font-medium text-sm text-gray-500">
+                {{ $page.props.auth.user.email }}
+              </div>
+            </div>
+
+            <div class="mt-3 space-y-1">
+              <ResponsiveNavLink :href="route('profile.edit')">
+                Profile
+              </ResponsiveNavLink>
+              <ResponsiveNavLink
+                :href="route('logout')"
+                method="post"
+                as="button"
+              >
+                Log out
+              </ResponsiveNavLink>
+            </div>
+          </div>
+          <div v-else>
+            <NavPrime>
+              <button @click="openLoginModal">Login</button>
+              <div
+                class="modal"
+                v-if="showLoginModal"
+                @click.self="closeLoginModal"
+              >
+                <Login />
+              </div>
+            </NavPrime>
+            <NavPrime>
+              <button @click="openRegisterModal">Register</button>
+              <div
+                class="modal"
+                v-if="showRegisterModal"
+                @click.self="closeRegisterModal"
+              >
+                <Register />
+              </div>
+            </NavPrime>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Page Heading -->
+      <header class="bg-white shadow" v-if="$slots.header">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <slot name="header" />
+        </div>
+      </header>
+      <!-- Page Content -->
+      <main>
+        <slot />
+      </main>
+      <!-- Page Footer -->
+      <footer>
+        <FooterLayout />
+      </footer>
     </div>
+  </div>
 </template>
 
 <style scoped>
+footer {
+  z-index: 1;
+  /* Set the default z-index value for the footer */
+}
+
 button {
-    font-size: 1rem;
-    background-color: white;
-    color: black;
-    border-radius: 5px;
-    cursor: pointer;
+  font-size: 1rem;
+  background-color: white;
+  color: black;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 768px) {
-    button {
-        margin-bottom: 1rem;
-    }
+  button {
+    margin-bottom: 1rem;
+  }
 }
 </style>

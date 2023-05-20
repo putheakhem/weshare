@@ -78,7 +78,7 @@ const handleFilePondInitFile = (item) => {
   <GuestLayout>
     <Head title="Store the Post" />
 
-    <form @submit.prevent="form.post('/')">
+    <form @submit.prevent="form.post('/dashboard/upload')">
       <div>
         <label for="department" class="block text-900 font-medium mb-2"
           >Department</label

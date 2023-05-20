@@ -31,7 +31,7 @@ class StorePostController extends Controller
                 Storage::deleteDirectory('images/tmp/' . $temporaryImage->folder);
                 $temporaryImage->delete();
             }
-            return to_route('weshare')->withErrors($validator)->withInput();
+            return to_route('home')->withErrors($validator)->withInput();
         }
         $data = $validator->validated();
         $file_detail = FileDetails::create(
@@ -59,6 +59,6 @@ class StorePostController extends Controller
         }
 
 
-        return redirect()->route('weshare');
+        return redirect()->route('home');
     }
 }
