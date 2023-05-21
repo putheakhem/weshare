@@ -42,6 +42,7 @@ const closeRegisterModal = () => {
 
 //Dropdown Navigation
 const showingNavigationDropdown = ref(false);
+
 </script>
 
 <template>
@@ -96,14 +97,24 @@ const showingNavigationDropdown = ref(false);
                   >
                     Manage Majors
                   </NavLink>
+                  <NavLink
+                    :href="route('manage_files')"
+                    :active="route().current('manage_files')"
+                  >
+                    Manage Files
+                  </NavLink>
+                  <NavLink
+                    :href="route('manage_types')"
+                    :active="route().current('manage_types')"
+                  >
+                    Manage Types
+                  </NavLink>
                 </div>
               </div>
 
               <!-- Navigation Links for Users -->
               <div
-                v-if="
-                  !$page.props.auth.user || !$page.props.auth.user.role == 0
-                "
+              v-if="!$page.props.auth.user || $page.props.auth.user.role === 1"
                 class="inline-flex"
               >
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
@@ -111,10 +122,7 @@ const showingNavigationDropdown = ref(false);
                 </div>
               </div>
               <!-- Navigation Links for Users Login -->
-              <div
-                v-if="$page.props.auth.user"
-                class="inline-flex"
-              >
+              <div v-if="$page.props.auth.user && $page.props.auth.user.role == 1" class="inline-flex">
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                   <NavLink :href="route('dashboard')"> Dashboard </NavLink>
                 </div>
@@ -122,10 +130,10 @@ const showingNavigationDropdown = ref(false);
                   <NavLink :href="route('upload')"> Upload </NavLink>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                  <NavLink :href="route('document')"> Document </NavLink>
+                  <NavLink :href="route('document')"> My Document </NavLink>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                  <NavLink :href="route('save')"> Save </NavLink>
+                  <NavLink :href="route('save')"> My Favorite </NavLink>
                 </div>
               </div>
             </div>

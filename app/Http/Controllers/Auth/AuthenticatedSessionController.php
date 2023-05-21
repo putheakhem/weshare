@@ -8,7 +8,9 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,20 +26,25 @@ class AuthenticatedSessionController extends Controller
             'status' => session('status'),
         ]);
     }
-
     /**
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
-        $role = $request->user()->role;
-        if($role == 0){
-            return redirect()->intended(RouteServiceProvider::ADMIN_HOME);
-        }else{
-            return redirect()->intended(RouteServiceProvider::HOME);
+        $status = $request->user()->status;
+        if ($status == 'Active') {
+            $role = $request->user()->role;
+            if ($role == 0) {
+                return redirect()->intended(RouteServiceProvider::ADMIN_HOME);
+            } else {
+                return redirect()->intended(RouteServiceProvider::HOME);
+            }
+        } else { 
+            Auth::guard('web')->logout();
+            Session::flash('warning', 'Your account is inactive. Please contact support.');
+            return redirect('/');
         }
     }
 

@@ -16,7 +16,7 @@ const exportCSV = () => {
     dt.value.exportCSV();
 };
 const props = defineProps({
-    majors: {
+    files: {
         type: Array,
         required: true,
     },
@@ -84,7 +84,7 @@ const deleteMajor = () => {
     <Head title="Manage Users" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Manage Majors</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Manage Files</h2>
         </template>
         <Toast />
         <div class="py-12">
@@ -109,12 +109,12 @@ const deleteMajor = () => {
                                 </div>
                             </template>
                         </Toolbar>
-                        <DataTable ref="dt" :value="majors" resizableColumns columnResizeMode="expand" showGridlines
+                        <DataTable ref="dt" :value="files" resizableColumns columnResizeMode="expand" showGridlines
                             dataKey="id" :paginator="true" :rows="10" :filters="filters"
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                             :rowsPerPageOptions="[5, 10, 25]"
                             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} majors">
-                            <Column field="name" header="Name" sortable></Column>
+                            <Column field="filename" header="Name" sortable></Column>
                             <Column field="created_at_formatted" header="Created Date" sortable></Column>
                             <Column field="updated_at_formatted" header="Modified Date" sortable></Column>
                             <Column header="Active" :exportable="false" style="min-width:8rem">

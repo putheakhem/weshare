@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Major;
+use App\Models\Majors;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,7 +11,7 @@ class MajorController extends Controller
 {
     public function index()
     {
-        $majors = Major::get()->map(function ($major) {
+        $majors = Majors::get()->map(function ($major) {
             $major->created_at_formatted = Carbon::parse($major->created_at)->format('d-m-Y H:i:s');
             $major->updated_at_formatted = Carbon::parse($major->updated_at)->format('d-m-Y H:i:s');
             return $major;
@@ -25,12 +25,12 @@ class MajorController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-        Major::create([
+        Majors::create([
             'name' => $request->name,
         ]);
         return redirect()->route('manage_majors')->with('message', 'Major Created Successfully');
     }
-    public function edit(Major $major)
+    public function edit(Majors $major)
     {
         //public function edit(User $user)
         return Inertia::render(
@@ -40,7 +40,7 @@ class MajorController extends Controller
             ]
         );
     }
-    public function update(Request $request, Major $major)
+    public function update(Request $request, Majors $major)
     {
         $request->validate([
             'name' => 'required'
@@ -49,7 +49,7 @@ class MajorController extends Controller
         $major->save();
         return redirect()->route('manage_majors')->with('message', 'User Updated Successfully');
     }
-    public function destroy(Major $major)
+    public function destroy(Majors $major)
     {
         $major->delete();
         return redirect()->route('manage_majors')->with('message', 'Blog Delete Successfully');

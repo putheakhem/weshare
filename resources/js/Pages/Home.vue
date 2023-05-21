@@ -38,7 +38,9 @@
         </div>
       </div>
     </section>
-    <AboutUs id="aboutus" class="mb-6"></AboutUs>
+    
+      <AboutUs id="aboutus" ></AboutUs>
+    
   </AuthenticatedLayout>
 </template>
 <script>
@@ -84,15 +86,7 @@ export default {
     jumpToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    jumpToaboutus() {
-      const visionSection = document.getElementById("aboutus");
-      if (visionSection) {
-        window.scrollTo({
-          top: visionSection.offsetTop,
-          behavior: "smooth",
-        });
-      }
-    },
+    
   },
 };
 </script>

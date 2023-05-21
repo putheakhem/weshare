@@ -1,6 +1,9 @@
 <?php
 use App\Http\Controllers\DeleteTemporaryFileController;
 use App\Http\Controllers\DocController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\TypeController;
+use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StorePostController;
@@ -61,6 +64,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/manage_majors', [MajorController::class, 'store'])->name('manage_majors.create');
     Route::patch('/admin/manage_majors/{major}', [MajorController::class, 'update'])->name('manage_majors.update');
     Route::delete('/admin/manage_majors/{major}', [MajorController::class, 'destroy'])->name('manage_majors.delete');
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/manage_files', [FileController::class, 'index'])->name('manage_files');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/manage_types', [TypeController::class, 'index'])->name('manage_types');
+    Route::post('/admin/manage_types', [TypeController::class, 'store'])->name('manage_types.create');
+    Route::patch('/admin/manage_types/{type}', [TypeController::class, 'update'])->name('manage_types.update');
+    Route::delete('/admin/manage_types/{type}', [TypeController::class, 'destroy'])->name('manage_types.delete');
 });
 
 Route::middleware('auth')->group(function () {
