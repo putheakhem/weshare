@@ -15,7 +15,7 @@ class PostController extends Controller
     {
         $majors = Majors::all();
         $filetype = Types::all();
-        return Inertia::render('PostIndex', [
+        return Inertia::render('Upload', [
            'majors' => $majors,
            'filetype' => $filetype
         ]);

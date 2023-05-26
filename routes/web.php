@@ -1,14 +1,17 @@
 <?php
 use App\Http\Controllers\DeleteTemporaryFileController;
 use App\Http\Controllers\DocController;
+use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StorePostController;
 use App\Http\Controllers\UploadFileController;
 use App\Http\Controllers\UserController;
+use App\Models\Majors;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,30 +31,50 @@ use function Termwind\render;
 
 // ------ User Hompage--------------
 Route::get('/', function () {
+    $major = Majors::all();
     return Inertia::render('Home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'majors' => $major
     ]);
 })->name('home');
+
 Route::get('/aboutus', function () {
     return Inertia::render('AboutUs');
 })->name('aboutus');
 
+// add to favorites
+
+Route::post('/favorite', [FavoritesController::class, 'addToFavorites']);
+Route::post('/unfavorite', [FavoritesController::class, 'removeFromFavorites']);
+
+
+// show favorites
+Route::get('/fav',function(){
+    return inertia::render('Favorite');
+})->name('fav');
+
+// Searching
+
+Route::get('/department/{id}',[SearchController::class,"departmentfilter"])->name('major');
+Route::get('/search',SearchController::class);
+
+
 // -------User dashboard----------------
-Route::get('/dashboard', function(){
-    return inertia::render('Dashboard');
-})->name('dashboard');
+
+
 Route::get('/dashboard/doc',DocController::class)->name('document');
 Route::get('/dashboard/savedoc',DocController::class)->name('save');
 Route::get('/dashboard/doc/file',[DocController::class,'showfile']);
+
 // -----------------------Uppload File--------------
 
-Route::post('/dashboard/upload',StorePostController::class);
-Route::post('/upload', UploadFileController::class);
+Route::post('/upload',StorePostController::class);
+Route::post('/uploadfile', UploadFileController::class);
 Route::delete('/revert',DeleteTemporaryFileController::class);
-Route::get('/dashboard/upload',PostController::class)->name('upload');
+Route::get('/upload',PostController::class)->name('upload');
 
 // ------------------Admin Dashboard-------------------------
 Route::middleware('auth')->group(function () {

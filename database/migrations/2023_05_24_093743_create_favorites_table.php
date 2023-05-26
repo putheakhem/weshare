@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('favorites', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('file_de_id')->constrained();
-            $table->string('filename');
-            $table->string('path');
-            $table->unsignedTinyInteger('isfav')->default(0);
+            $table->foreignId('item_id')->constrained();
             $table->timestamps();
-           
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('favorites');
     }
 };

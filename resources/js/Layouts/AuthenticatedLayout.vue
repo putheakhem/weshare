@@ -17,6 +17,14 @@ defineProps({
   canRegister: {
     type: Boolean,
   },
+  majors: {
+    type: Array,
+    required: true,
+  },
+  filetype: {
+    type: Array,
+    required: true,
+  },
 });
 
 //Login Modal
@@ -42,7 +50,6 @@ const closeRegisterModal = () => {
 
 //Dropdown Navigation
 const showingNavigationDropdown = ref(false);
-
 </script>
 
 <template>
@@ -114,7 +121,9 @@ const showingNavigationDropdown = ref(false);
 
               <!-- Navigation Links for Users -->
               <div
-              v-if="!$page.props.auth.user || $page.props.auth.user.role === 1"
+                v-if="
+                  !$page.props.auth.user || $page.props.auth.user.role === 1
+                "
                 class="inline-flex"
               >
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
@@ -122,18 +131,22 @@ const showingNavigationDropdown = ref(false);
                 </div>
               </div>
               <!-- Navigation Links for Users Login -->
-              <div v-if="$page.props.auth.user && $page.props.auth.user.role == 1" class="inline-flex">
+              <div
+                v-if="$page.props.auth.user && $page.props.auth.user.role == 1"
+                class="inline-flex"
+              >
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                  <NavLink :href="route('dashboard')"> Dashboard </NavLink>
+                  <NavLink 
+                  :href="route('upload')"
+                  :active="route().current('upload')"> Upload </NavLink>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                  <NavLink :href="route('upload')"> Upload </NavLink>
+                  <NavLink :href="route('document')"
+                  :active="route().current('document')"> My Document </NavLink>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                  <NavLink :href="route('document')"> My Document </NavLink>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                  <NavLink :href="route('save')"> My Favorite </NavLink>
+                  <NavLink :href="route('fav')"
+                  :active="route().current('fav')"> My Favorite </NavLink>
                 </div>
               </div>
             </div>
@@ -205,7 +218,6 @@ const showingNavigationDropdown = ref(false);
                 </div>
               </div>
             </div>
-
             <!-- Hamburger -->
             <div class="-mr-2 flex items-center sm:hidden">
               <button
