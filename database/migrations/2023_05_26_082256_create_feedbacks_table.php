@@ -1,3 +1,5 @@
+
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -11,14 +13,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('feedbacks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('file_de_id')->constrained();
-            $table->string('filename');
-            $table->string('path');
+            $table->unsignedBigInteger('user_id');
+            $table->text('description');
+            $table->string('status')->default('Inactive');
             $table->timestamps();
-           
+
+            // Define foreign key constraint
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('feedbacks');
     }
 };

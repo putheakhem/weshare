@@ -71,7 +71,6 @@ const deleteMajor = () => {
     const form = useForm({
         id: major.value.id,
         name: major.value.name,
-        activated: major.value.activated
     });
     form.delete(route("manage_majors.delete", major.value.id));
     deleteMajorDialog.value = false;

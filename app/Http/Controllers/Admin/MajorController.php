@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Majors;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -28,11 +29,10 @@ class MajorController extends Controller
         Majors::create([
             'name' => $request->name,
         ]);
-        return redirect()->route('manage_majors')->with('message', 'Major Created Successfully');
+        return redirect()->route('manage_majors');
     }
     public function edit(Majors $major)
     {
-        //public function edit(User $user)
         return Inertia::render(
             'Admin/ManageMajors/Manage_Majors',
             [
@@ -47,11 +47,11 @@ class MajorController extends Controller
         ]);
         $major->name = $request->name;
         $major->save();
-        return redirect()->route('manage_majors')->with('message', 'User Updated Successfully');
+        return redirect()->route('manage_majors');
     }
     public function destroy(Majors $major)
     {
         $major->delete();
-        return redirect()->route('manage_majors')->with('message', 'Blog Delete Successfully');
+        return redirect()->route('manage_majors');
     }
 }

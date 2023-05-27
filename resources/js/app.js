@@ -8,7 +8,10 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 import PrimeVue from 'primevue/config';
+import Paginator from 'primevue/paginator';
 
+import DataView from 'primevue/dataview';
+import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'   // optional
 import 'primevue/resources/themes/lara-light-blue/theme.css';
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
@@ -38,6 +41,9 @@ createInertiaApp({
             .use(PrimeVue)
             .use(ZiggyVue, Ziggy)
             .use(ToastService)
+            .component("Paginator", Paginator)
+            .component("DataView", DataView)
+            .component("DataViewLayoutOptions", DataViewLayoutOptions)
             .component("Button", Button)
             .component("DataTable", DataTable)
             .component("Column", Column)
