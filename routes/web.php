@@ -1,19 +1,19 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\DeleteTemporaryFileController;
+use App\Http\Controllers\UploadFile\DeleteTemporaryFileController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Files\FavouriteItemsController;
 use App\Http\Controllers\Files\HomePageController;
 use App\Http\Controllers\Files\MyDocumentController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Admin\MajorController;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\UploadFile\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\StorePostController;
-use App\Http\Controllers\UploadFileController;
+use App\Http\Controllers\UploadFile\UploadFileController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\UploadFile\StorePostController;
 use App\Models\Items;
 use Illuminate\Support\Facades\Route;
 
@@ -29,17 +29,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Home Page Controller
+// ------------------Home Page-------------------------
 Route::group([], function () {
     Route::get('/', [HomePageController::class, 'index'])->name('home');
     Route::get('/file_detail/{file}', [HomePageController::class, 'file_detail'])->name('file_detail');
     Route::get('/all_files', [HomePageController::class, 'files'])->name('all_files');
 });
-Route::get('/test',function(){
-    $items = Items::all();
-    return dd($items);
-});
-// Favorites
+
+// ------------------Favorites-------------------------
 
 Route::group([], function () {
     Route::get('/favourite_items',[FavouriteItemsController::class, 'index'])->name('favourite_items');
@@ -47,7 +44,7 @@ Route::group([], function () {
     Route::post('/favourite_items/{itemId}', [FavouriteItemsController::class, 'destroy'])->name('favorites.delete');
 });
 
-// My Document
+// ------------------Documment-------------------------
 
 Route::middleware('auth')->group(function () {
     Route::get('/my_documents', [MyDocumentController::class, 'index'])->name('my_documents');
@@ -57,11 +54,10 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Searching
+// ------------------Searhing-------------------------
 
 Route::get('/department/{id}',[SearchController::class,"departmentfilter"])->name('major');
 Route::get('/search',SearchController::class);
-
 
 // -----------------------Uppload File--------------
 
@@ -71,6 +67,7 @@ Route::delete('/revert',DeleteTemporaryFileController::class);
 Route::get('/uploadfile',PostController::class)->name('upload');
 
 // ------------------Admin Dashboard-------------------------
+
 Route::group([], function () {
     // Users Management
     Route::middleware('auth')->group(function () {
@@ -106,7 +103,7 @@ Route::group([], function () {
     });
 });
 
-// Profile
+// ------------------Profile-------------------------
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

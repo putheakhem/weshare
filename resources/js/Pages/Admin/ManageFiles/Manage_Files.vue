@@ -4,6 +4,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
 import { defineProps } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
+import Textarea from 'primevue/textarea';
 import { ref, onMounted } from 'vue';
 const toast = useToast();
 const submitted = ref(false);

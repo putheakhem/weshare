@@ -84,7 +84,7 @@
                       >File:</label
                     >
                     <file-pond
-                      name="image"
+                      name="file"
                       ref="pond"
                       label-idle="Drop files here or <span class='filepond--label-action'>Browse</span>"
                       v-bind:allow-multiple="true"
@@ -186,7 +186,7 @@ const myServer = {
       })
       .catch((err) => {
         error(err);
-      });
+      }); 
   },
   revert: "/revert",
 };

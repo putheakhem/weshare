@@ -80,7 +80,7 @@ const toggleFavorite = (file) => {
                     <div class="flex justify-center">
                         <div class="card mt-5">
                             <div class="grid grid-cols-2 gap-4">
-                                <a v-if="$page.props.auth.user" :href="`/storage/${file.path}`" target="_blank">
+                                <a v-if="$page.props.auth.user" :href="`/storage/files/${file.path}`" target="_blank">
                                     <div
                                         class="border-2 border-blue-300 bg-white rounded-lg mx-2 my-4 p-4 flex flex-col items-center">
                                         <div class="mb-3">

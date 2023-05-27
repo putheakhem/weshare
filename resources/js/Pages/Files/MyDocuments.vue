@@ -5,6 +5,7 @@ import { defineProps } from "vue";
 import { useToast } from "primevue/usetoast";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import Textarea from 'primevue/textarea';
 import MultiSelect from "primevue/multiselect";
 const toast = useToast();
 
@@ -218,9 +219,9 @@ const deleteFile = () => {
                 display="chip"
                 class="md:w-20rem"
               >
-            </MultiSelect>
-               <!-- Filter Filetype-->
-            <MultiSelect
+              </MultiSelect>
+              <!-- Filter Filetype-->
+              <MultiSelect
                 v-model="selectedTypes"
                 :options="types"
                 optionLabel="name"
@@ -228,7 +229,7 @@ const deleteFile = () => {
                 display="chip"
                 class="md:w-20rem"
               >
-            </MultiSelect>
+              </MultiSelect>
             </div>
 
             <!-- Display Favourite Files -->
@@ -395,32 +396,102 @@ const deleteFile = () => {
               :modal="true"
               class="p-fluid"
             >
-              <div class="field" v-if="file.id">
-                <label for="name" class="font-bold text-gray-700">Name</label>
-                <div class="mt-1 text-gray-900">{{ file.filename }}</div>
-              </div>
+              <div class="bg-white px-4 pb-4 sm:p-6 sm:pb-4">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                  <!-- major -->
+                  <div class="w-56">
+                    <label for="type" class="font-bold text-gray-700 mb-2"
+                      >Department</label
+                    >
+                    <div class="w-full md:w-14rem">
+                      <Dropdown
+                        v-model="file.major_id"
+                        editable
+                        :options="majors"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select Doc Type"
+                        required="true"
+                        autofocus
+                        :class="{ 'p-invalid': submitted && !file.major_id }"
+                      />
+                      <small class="p-error" v-if="submitted && !file.major_id"
+                        >Type is required.</small
+                      >
+                    </div>
+                  </div>
+                  <!-- type -->
+                  <div class="w-56">
+                    <label for="type" class="font-bold text-gray-700 mb-2"
+                      >Type</label
+                    >
+                    <div class="w-full md:w-14rem">
+                      <Dropdown
+                        v-model="file.type_id"
+                        editable
+                        :options="types"
+                        optionLabel="name"
+                        optionValue="id"
+                        placeholder="Select Doc Type"
+                        required="true"
+                        autofocus
+                        :class="{ 'p-invalid': submitted && !file.type_id }"
+                      />
+                      <small class="p-error" v-if="submitted && !file.type_id"
+                        >Type is required.</small
+                      >
+                    </div>
+                  </div>
+                </div>
 
-              <div class="field mt-2">
-                <label for="name" v-if="file.id" class="font-bold text-gray-700"
-                  >Path</label
-                >
-                <div class="mt-1 mb-2">
-                  <a
-                    class="text-blue-700 hover:underline"
-                    :href="`${file.path}`"
-                    target="_blank"
-                    >{{ file.path }}</a
+                <div class="mb-4">
+                  <label for="title" class="font-bold text-gray-700"
+                    >Title</label
                   >
+                  <div class="mt-2">
+                    <InputText
+                      id="title"
+                      v-model.trim="file.title"
+                      required="true"
+                      autofocus
+                      :class="{ 'p-invalid': submitted && !file.title }"
+                    />
+                    <small class="p-error" v-if="submitted && !file.title"
+                      >Title is required.</small
+                    >
+                  </div>
                 </div>
-                <label for="name" v-if="file.id" class="font-bold text-gray-700"
-                  >If you want to update uploaded file</label
-                >
-                <div v-else>
-                  <label for="name" class="font-bold text-gray-700"
-                    >Please choose a file to upload</label
+                <div class="mb-4">
+                  <label for="description" class="font-bold text-gray-700"
+                    >Description</label
                   >
+                  <div class="mt-2">
+                    <Textarea id="description" v-model="file.description" />
+                  </div>
                 </div>
-                <input
+                <div class="mb-4">
+                  <label
+                    for="name"
+                    v-if="file.id"
+                    class="font-bold text-gray-700"
+                    >Path</label
+                  >
+                  <div class="mt-1 mb-2">
+                    <a
+                      class="text-blue-700 hover:underline"
+                      :href="`storage/files/${file.path}`"
+                      target="_blank"
+                      >{{ file.path }}</a
+                    >
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <label
+                    for="formFile"
+                    class="block text-gray-700 text-sm font-bold mb-2"
+                    >File:</label
+                  >
+                  <input
                   class="bg-white w-full p-4 border-gray-200 mt-2 rounded-md border-2 shadow-md hover:bg-blue-700 hover:text-white hover:cursor-pointer"
                   type="file"
                   v-on:change="onChange"
@@ -433,95 +504,8 @@ const deleteFile = () => {
                     >File is required.</small
                   >
                 </div>
-              </div>
-
-              <div class="field mt-2">
-                <label for="title" class="font-bold text-gray-700">Title</label>
-                <div class="mt-2">
-                  <InputText
-                    id="title"
-                    v-model.trim="file.title"
-                    required="true"
-                    autofocus
-                    :class="{ 'p-invalid': submitted && !file.title }"
-                  />
-                  <small class="p-error" v-if="submitted && !file.title"
-                    >Title is required.</small
-                  >
                 </div>
               </div>
-
-              <div class="field mt-2">
-                <label for="description" class="font-bold text-gray-700"
-                  >Description</label
-                >
-                <div class="mt-2">
-                  <Textarea id="description" v-model="file.description" />
-                </div>
-              </div>
-
-              <div class="card flex flex-col justify-center mt-2">
-                <label for="major" class="font-bold text-gray-700 mb-2"
-                  >Major</label
-                >
-                <div class="w-full md:w-14rem">
-                  <Dropdown
-                    v-model="file.major_id"
-                    editable
-                    :options="majors"
-                    optionLabel="name"
-                    optionValue="id"
-                    placeholder="Select a Major"
-                    required="true"
-                    autofocus
-                    :class="{ 'p-invalid': submitted && !file.major_id }"
-                  />
-                  <small class="p-error" v-if="submitted && !file.major_id"
-                    >Major is required.</small
-                  >
-                </div>
-              </div>
-
-              <div class="card flex flex-col justify-center mt-2">
-                <label for="type" class="font-bold text-gray-700 mb-2"
-                  >Type</label
-                >
-                <div class="w-full md:w-14rem">
-                  <Dropdown
-                    v-model="file.type_id"
-                    editable
-                    :options="types"
-                    optionLabel="name"
-                    optionValue="id"
-                    placeholder="Select a Type"
-                    required="true"
-                    autofocus
-                    :class="{ 'p-invalid': submitted && !file.type_id }"
-                  />
-                  <small class="p-error" v-if="submitted && !file.type_id"
-                    >Type is required.</small
-                  >
-                </div>
-              </div>
-
-              <div class="field mt-2" v-if="file.id">
-                <label for="user_name" class="font-bold text-gray-700"
-                  >Uploaded by</label
-                >
-                <div class="mt-2 text-gray-900">
-                  <Tag outlined class="mr-2">{{ file.user_name }}</Tag>
-                </div>
-              </div>
-
-              <div class="field mt-2 hidden sr-only" v-if="file.id">
-                <InputText
-                  id="name"
-                  v-model="file.file_de_id"
-                  required="true"
-                  autofocus
-                ></InputText>
-              </div>
-
               <template #footer>
                 <Button
                   label="Cancel"

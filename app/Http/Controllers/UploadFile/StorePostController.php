@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\UploadFile;
 
+use App\Http\Controllers\Controller;
 use App\Models\FileDetails;
 use App\Models\Items;
 use App\Models\TemporaryFile;
@@ -25,13 +26,14 @@ class StorePostController extends Controller
             ]
         ));
        
-        $temporaryImages = TemporaryFile::all();
+        $temporaryFiles = TemporaryFile::all();
+
         if ($validator->fails()) {
-            foreach ($temporaryImages as $temporaryImage) {
-                Storage::deleteDirectory('images/tmp/' . $temporaryImage->folder);
-                $temporaryImage->delete();
+            foreach ($temporaryFiles as $temporaryFile) {
+                Storage::deleteDirectory('files/tmp/' . $temporaryFile->folder);
+                $temporaryFile->delete();
             }
-            return to_route('home')->withErrors($validator)->withInput();
+            return to_route('my_documents')->withErrors($validator)->withInput();
         }
         $data = $validator->validated();
         $file_detail = FileDetails::create(
@@ -44,21 +46,19 @@ class StorePostController extends Controller
         );
         $user_id = Auth::user()->id;
 
-        foreach ($temporaryImages as $temporaryImage) {
-            Storage::copy('images/tmp/' . $temporaryImage->folder . '/' . $temporaryImage->file, 'images/' . $temporaryImage->folder . '/' . $temporaryImage->file);
+        foreach ($temporaryFiles as $temporaryFile) {
+            Storage::copy('files/tmp/' . $temporaryFile->folder . '/' . $temporaryFile->file, 'files/' . $temporaryFile->folder . '/' . $temporaryFile->file);
             
                 Items::create([
                     'user_id' => $user_id,
                     'file_de_id' => $file_detail->id,
-                    'filename' => $temporaryImage->file,
-                    'path' => $temporaryImage->folder . '/' . $temporaryImage->file
+                    'filename' => $temporaryFile->file,
+                    'path' => 'files/'.$temporaryFile->folder . '/' . $temporaryFile->file
                 ]);
          
-            Storage::deleteDirectory('images/tmp/' . $temporaryImage->folder);
-            $temporaryImage->delete();
+            Storage::deleteDirectory('files/tmp/' . $temporaryFile->folder);
+            $temporaryFile->delete();
         }
-
-
-        return redirect()->route('home');
+        return redirect()->route('my_documents');
     }
 }

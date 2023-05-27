@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\UploadFile;
 
+use App\Http\Controllers\Controller;
 use App\Models\TemporaryFile;
-
 use Illuminate\Support\Facades\Storage;
 
 class DeleteTemporaryFileController extends Controller

@@ -72,7 +72,8 @@ class MyDocumentController extends Controller
             $file = $request->file('fileupload');
             $newFilename = time() . '_' . $file->getClientOriginalName();
             $basename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $newPath = $file->storeAs('files', $newFilename, 'public');
+            $folder = uniqid('file-', true);
+            $newPath = $file->storeAs('files/'.$folder, $newFilename, 'public');
     
             // Update the fileupload
             $item->filename = $basename;
@@ -92,7 +93,8 @@ class MyDocumentController extends Controller
 
     public function destroy(Request $request,Items $item)
     {
-        
+      
+        $item->delete();
         $fileDetails = FileDetails::find($request->file_de_id);
         $fileDetails->delete();
         $item->delete();

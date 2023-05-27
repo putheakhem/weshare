@@ -20,4 +20,24 @@ class Items extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+    public function hasFile(string $file):bool
+    {
+        return strpos($this->file, $file) !== false;
+    }
+
+    public function findMissingFiles(array $files):array
+    {
+        $missingfiles = [];
+        $currentfiles = $this->file ? explode('|', $this->file) : [];
+
+        foreach($currentfiles as $file)
+        {
+            if(!in_array($file, $files))
+            {
+                $missingfiles[] = $file;
+            }
+        }
+
+        return $missingfiles;
+    }
 }
