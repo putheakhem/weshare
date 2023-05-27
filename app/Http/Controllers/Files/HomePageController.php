@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Files;
 use App\Http\Controllers\Controller;
 use App\Models\Items;
 use App\Models\Majors;
+use App\Models\Types;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Foundation\Application;
@@ -63,8 +64,12 @@ class HomePageController extends Controller
         foreach ($files as $file) {
             Log::debug('is_favorite', ['is_favorite' => $file->is_favorite]);
         }
+        $majors = Majors::all();
+        $types = Types::all();
         return Inertia::render('Files/Display_All_Files', [
             'files' => $files,
+            'majors' => $majors,
+            'types' => $types,
             'search' => $search
         ]);
     }

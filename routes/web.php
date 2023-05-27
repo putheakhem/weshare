@@ -2,18 +2,18 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\DeleteTemporaryFileController;
-use App\Http\Controllers\FileController;
+use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Files\FavouriteItemsController;
 use App\Http\Controllers\Files\HomePageController;
 use App\Http\Controllers\Files\MyDocumentController;
-use App\Http\Controllers\TypeController;
-use App\Http\Controllers\MajorController;
+use App\Http\Controllers\Admin\TypeController;
+use App\Http\Controllers\Admin\MajorController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StorePostController;
 use App\Http\Controllers\UploadFileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\UserController;
 use App\Models\Items;
 use Illuminate\Support\Facades\Route;
 
@@ -52,7 +52,7 @@ Route::group([], function () {
 Route::middleware('auth')->group(function () {
     Route::get('/my_documents', [MyDocumentController::class, 'index'])->name('my_documents');
     Route::post('/my_documents/{file}', [MyDocumentController::class, 'update'])->name('my_documents.update');
-    Route::delete('/my_documents/{file}', [MyDocumentController::class, 'destroy'])->name('my_documents.delete');
+    Route::delete('/my_documents/{item}', [MyDocumentController::class, 'destroy'])->name('my_documents.delete');
 
 });
 

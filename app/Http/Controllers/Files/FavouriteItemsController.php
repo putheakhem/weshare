@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Files;
 use App\Http\Controllers\Controller;
 use App\Models\FavouriteItem;
 use App\Models\Items;
+use App\Models\Majors;
+use App\Models\Types;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -33,8 +35,12 @@ class FavouriteItemsController extends Controller
                 ;
             })
             ->get();
+            $majors = Majors::all();
+            $types = Types::all();
         return Inertia::render('Files/FavouriteItems', [
             'favourites' => $favourites,
+            'majors' => $majors,
+            'types' => $types
         ]);
     }
 

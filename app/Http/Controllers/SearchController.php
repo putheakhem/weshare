@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Items;
 use App\Models\Majors;
+use App\Models\Types;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -44,8 +45,11 @@ class SearchController extends Controller
         foreach ($files as $file) {
             Log::debug('is_favorite', ['is_favorite' => $file->is_favorite]);
         }
+        $types = Types::all();
+     
         return Inertia::render('Search/SearchDepartment', [
             'files' => $files,
+            'types' => $types,
             'search' => $id
         ]);
     }

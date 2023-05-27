@@ -62,9 +62,9 @@ const toggleFavorite = (file) => {
 <template>
     <Head title="File Detail" />
     <AuthenticatedLayout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="bg-white">
+            <div class="max-w-screen-xl mx-auto sm:px-6 lg:px-8">
+                <div class=" overflow-hidden shadow-sm sm:rounded-lg">
                     <Toast position="top-center" />
 
                     <!-- Display File Detail -->
@@ -156,7 +156,7 @@ const toggleFavorite = (file) => {
                     </div>
 
                     <!-- Display File Carousel -->
-                    <h1 class="text-3xl font-bold my-12 flex text-blue-700 pl-10">
+                    <h1 class="text-3xl font-bold my-11 flex text-blue-700 pl-10">
                         Explore More Files
                     </h1>
                     <div class="card">

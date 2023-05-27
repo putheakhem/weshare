@@ -92,10 +92,10 @@ class MyDocumentController extends Controller
 
     public function destroy(Request $request,Items $item)
     {
-        $item = Items::find($request->id);
-        $item->delete();
+        
         $fileDetails = FileDetails::find($request->file_de_id);
         $fileDetails->delete();
+        $item->delete();
         return redirect()->route('my_documents');
     }
 

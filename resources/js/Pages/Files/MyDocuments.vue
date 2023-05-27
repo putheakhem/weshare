@@ -27,7 +27,8 @@ const props = defineProps({
 const search = ref("");
 const currentPage = ref(1);
 const perPage = ref(20); // Number of items to display per page
-
+const selectedMajors = ref([]); //selectmajor
+const selectedTypes = ref([]); //selectype
 const cancelSearch = () => {
   search.value = "";
 };
@@ -56,12 +57,30 @@ const searchFiles = () => {
 const filteredFiles = ref([]);
 
 const computedFilteredFiles = computed(() => {
-  if (search.value === "") {
-    console.log(props.files);
-    return props.files;
-  } else {
-    return filteredFiles.value;
+  let result = props.files;
+
+  if (search.value !== "") {
+    const searchQuery = search.value.toLowerCase().trim();
+    result = result.filter(
+      (file) =>
+        file.title.toLowerCase().includes(searchQuery) ||
+        file.major_name.toLowerCase().includes(searchQuery) ||
+        file.file_type.toLowerCase().includes(searchQuery) ||
+        file.filename.toLowerCase().includes(searchQuery)
+    );
   }
+
+  if (selectedMajors.value.length > 0) {
+    result = result.filter((file) =>
+      selectedMajors.value.some((major) => major.name === file.major_name)
+    );
+  }
+  if (selectedTypes.value.length > 0) {
+    result = result.filter((file) =>
+      selectedTypes.value.some((type) => type.name === file.file_type)
+    );
+  }
+  return result;
 });
 
 const paginatedFiles = computed(() => {
@@ -165,8 +184,8 @@ const deleteFile = () => {
 <template>
   <Head title="My Favourite" />
   <AuthenticatedLayout>
-    <div class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="bg-white">
+      <div class="max-w-screen-lg mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
           <div class="pl-4 sm:pl-8 md:pl-12 lg:pl-36 mb-8">
             <Toast />
@@ -175,14 +194,13 @@ const deleteFile = () => {
             <div
               class="flex flex-wrap gap-2 items-center justify-center pl-3 mb-4 mt-8"
             >
-              
-              <span class="p-input-icon-left">
+              <span class="p-input-icon-left w-1/2">
                 <i class="pi pi-search" />
                 <InputText
                   v-model="search"
                   @input="searchFiles"
                   placeholder="Search"
-                  class="md:w-50rem"
+                  class="w-full md:w-50rem"
                 />
                 <i
                   v-if="search"
@@ -191,29 +209,26 @@ const deleteFile = () => {
                 ></i>
               </span>
 
-              <!-- Filter menu -->
-
+              <!-- Filter Major-->
               <MultiSelect
-                v-model="selectedCountries"
-                :options="countries"
+                v-model="selectedMajors"
+                :options="majors"
                 optionLabel="name"
-                placeholder="Select Countries"
+                placeholder="Select Majors"
                 display="chip"
                 class="md:w-20rem"
               >
-                <template #option="slotProps">
-                  <div class="flex align-items-center">
-                    <img
-                      :alt="slotProps.option.name"
-                      src="https://primefaces.org/cdn/primevue/images/flag/flag_placeholder.png"
-                      :class="`flag flag-${slotProps.option.code.toLowerCase()} mr-2`"
-                      style="width: 18px"
-                    />
-                    <div>{{ slotProps.option.name }}</div>
-                  </div>
-                </template>
-                
-              </MultiSelect>
+            </MultiSelect>
+               <!-- Filter Filetype-->
+            <MultiSelect
+                v-model="selectedTypes"
+                :options="types"
+                optionLabel="name"
+                placeholder="Select Doc Types"
+                display="chip"
+                class="md:w-20rem"
+              >
+            </MultiSelect>
             </div>
 
             <!-- Display Favourite Files -->
